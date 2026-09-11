@@ -18,11 +18,11 @@ function App() {
   const [gameOver, setGameOver] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Enemy ID ko state ki jagah ref mein rakha hai
   const enemyIdRef = useRef(0);
+  const roadRef = useRef<HTMLDivElement>(null);
 
   // =====================================
-  // MOVE PLAYER
+  // MOVE PLAYER LEFT
   // =====================================
 
   const moveLeft = () => {
@@ -32,6 +32,10 @@ function App() {
       Math.max(position - 30, 20)
     );
   };
+
+  // =====================================
+  // MOVE PLAYER RIGHT
+  // =====================================
 
   const moveRight = () => {
     if (gameOver || isPaused) return;
@@ -57,7 +61,7 @@ function App() {
         moveRight();
       }
 
-      // Space = Pause
+      // Space = Pause / Resume
       if (event.code === "Space") {
         event.preventDefault();
 
@@ -67,10 +71,16 @@ function App() {
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener(
+      "keydown",
+      handleKeyDown
+    );
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener(
+        "keydown",
+        handleKeyDown
+      );
     };
   }, [gameOver, isPaused]);
 
@@ -99,7 +109,11 @@ function App() {
 
     const enemyTimer = setInterval(() => {
       const randomLane =
-        lanes[Math.floor(Math.random() * lanes.length)];
+        lanes[
+          Math.floor(
+            Math.random() * lanes.length
+          )
+        ];
 
       enemyIdRef.current += 1;
 
@@ -134,7 +148,7 @@ function App() {
             ...enemy,
             top: enemy.top + 8,
           }))
-          .filter((enemy) => enemy.top < 700)
+          .filter((enemy) => enemy.top < 800)
       );
     }, 50);
 
@@ -144,21 +158,57 @@ function App() {
   }, [gameOver, isPaused]);
 
   // =====================================
-  // COLLISION
+  // COLLISION DETECTION
   // =====================================
 
   useEffect(() => {
     if (gameOver || isPaused) return;
 
+    const road = roadRef.current;
+
+    if (!road) return;
+
+    const player =
+      road.querySelector(
+        ".player-car"
+      ) as HTMLElement | null;
+
+    if (!player) return;
+
+    const playerRect =
+      player.getBoundingClientRect();
+
     enemies.forEach((enemy) => {
-      const sameLane =
-        Math.abs(enemy.lane - carPosition) < 10;
+      const enemyElement =
+        road.querySelector(
+          `[data-enemy-id="${enemy.id}"]`
+        ) as HTMLElement | null;
 
-      const touchingPlayer =
-        enemy.top > 450 &&
-        enemy.top < 570;
+      if (!enemyElement) return;
 
-      if (sameLane && touchingPlayer) {
+      const enemyRect =
+        enemyElement.getBoundingClientRect();
+
+      /*
+        Actual visual collision detection.
+
+        Small overlap required so that cars don't
+        trigger Game Over too early.
+      */
+
+      const padding = 8;
+
+      const collision =
+        playerRect.left + padding <
+          enemyRect.right - padding &&
+        playerRect.right - padding >
+          enemyRect.left + padding &&
+        playerRect.top + padding <
+          enemyRect.bottom - padding &&
+        playerRect.bottom - padding >
+          enemyRect.top + padding;
+
+      if (collision) {
         setGameOver(true);
 
         setLastScore(score);
@@ -170,14 +220,13 @@ function App() {
     });
   }, [
     enemies,
-    carPosition,
     score,
     gameOver,
     isPaused,
   ]);
 
   // =====================================
-  // RESTART
+  // RESTART GAME
   // =====================================
 
   const restartGame = () => {
@@ -191,7 +240,7 @@ function App() {
   };
 
   // =====================================
-  // PAUSE
+  // PAUSE / RESUME
   // =====================================
 
   const togglePause = () => {
@@ -201,7 +250,7 @@ function App() {
   };
 
   // =====================================
-  // TOUCH HOLD SUPPORT
+  // MOBILE LEFT BUTTON
   // =====================================
 
   const startMovingLeft = () => {
@@ -210,20 +259,32 @@ function App() {
     moveLeft();
   };
 
+  // =====================================
+  // MOBILE RIGHT BUTTON
+  // =====================================
+
   const startMovingRight = () => {
     if (gameOver || isPaused) return;
 
     moveRight();
   };
 
+  // =====================================
+  // JSX
+  // =====================================
+
   return (
     <div className="game">
 
-      {/* HEADER */}
+      {/* =====================================
+          HEADER
+      ===================================== */}
 
       <div className="game-header">
 
         <h1>🏎️ Car Racing Game</h1>
+
+        {/* SCORE BOARD */}
 
         <div className="score-board">
 
@@ -244,13 +305,21 @@ function App() {
 
         </div>
 
+        {/* GAME BUTTONS */}
+
         <div className="controls">
 
-          <button onClick={togglePause}>
-            {isPaused ? "▶ Resume" : "⏸ Pause"}
+          <button
+            onClick={togglePause}
+          >
+            {isPaused
+              ? "▶ Resume"
+              : "⏸ Pause"}
           </button>
 
-          <button onClick={restartGame}>
+          <button
+            onClick={restartGame}
+          >
             🔄 Restart
           </button>
 
@@ -258,13 +327,18 @@ function App() {
 
       </div>
 
-      {/* GAME AREA */}
+      {/* =====================================
+          GAME AREA
+      ===================================== */}
 
       <div className="game-wrapper">
 
-        <div className="road">
+        <div
+          className="road"
+          ref={roadRef}
+        >
 
-          {/* ROAD LINES */}
+          {/* ROAD LINE 1 */}
 
           <div
             className={`road-line line-1 ${
@@ -272,18 +346,24 @@ function App() {
             }`}
           />
 
+          {/* ROAD LINE 2 */}
+
           <div
             className={`road-line line-2 ${
               isPaused ? "paused" : ""
             }`}
           />
 
-          {/* ENEMY CARS */}
+          {/* =====================================
+              ENEMY CARS
+          ===================================== */}
 
           {enemies.map((enemy) => (
+
             <div
               key={enemy.id}
               className="enemy-car"
+              data-enemy-id={enemy.id}
               style={{
                 left: `${enemy.lane}%`,
                 top: `${enemy.top}px`,
@@ -291,9 +371,12 @@ function App() {
             >
               🚙
             </div>
+
           ))}
 
-          {/* PLAYER CAR */}
+          {/* =====================================
+              PLAYER CAR
+          ===================================== */}
 
           <div
             className="player-car"
@@ -304,72 +387,102 @@ function App() {
             🚗
           </div>
 
-          {/* PAUSE */}
+          {/* =====================================
+              PAUSE SCREEN
+          ===================================== */}
 
           {isPaused && !gameOver && (
+
             <div className="pause-screen">
 
-              <h2>⏸ GAME PAUSED</h2>
+              <h2>
+                ⏸ GAME PAUSED
+              </h2>
 
               <p>
                 Press Resume to continue
               </p>
 
             </div>
+
           )}
 
-          {/* GAME OVER */}
+          {/* =====================================
+              GAME OVER
+          ===================================== */}
 
           {gameOver && (
+
             <div className="game-over">
 
-              <h2>💥 GAME OVER</h2>
+              <h2>
+                💥 GAME OVER
+              </h2>
 
               <p>
                 Your Score:
-                <strong>{lastScore}</strong>
+                <strong>
+                  {lastScore}
+                </strong>
               </p>
 
               <p>
                 Best Score:
-                <strong>{bestScore}</strong>
+                <strong>
+                  {bestScore}
+                </strong>
               </p>
 
-              <button onClick={restartGame}>
+              <button
+                onClick={restartGame}
+              >
                 🔄 Play Again
               </button>
 
             </div>
+
           )}
 
         </div>
 
       </div>
 
-      {/* MOBILE CONTROLS */}
+      {/* =====================================
+          MOBILE CONTROLS
+      ===================================== */}
 
       <div className="mobile-controls">
 
         <button
           className="direction-btn"
-          onPointerDown={startMovingLeft}
+          onPointerDown={
+            startMovingLeft
+          }
         >
           ⬅️
         </button>
 
         <button
           className="direction-btn"
-          onPointerDown={startMovingRight}
+          onPointerDown={
+            startMovingRight
+          }
         >
           ➡️
         </button>
 
       </div>
 
+      {/* =====================================
+          INSTRUCTIONS
+      ===================================== */}
+
       <div className="instructions">
 
         <span className="desktop-instruction">
-          ⬅️ Left Arrow &nbsp;&nbsp; ➡️ Right Arrow
+          ⬅️ Left Arrow
+          &nbsp;&nbsp;
+          ➡️ Right Arrow
         </span>
 
         <span className="mobile-instruction">
@@ -383,4 +496,3 @@ function App() {
 }
 
 export default App;
-

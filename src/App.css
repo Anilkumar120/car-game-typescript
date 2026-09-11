@@ -24,6 +24,7 @@ body {
 .game {
   width: 100%;
   min-height: 100vh;
+
   text-align: center;
   color: white;
 
@@ -43,7 +44,12 @@ body {
 
 .game-header h1 {
   margin: 0 0 10px;
-  font-size: clamp(22px, 4vw, 32px);
+
+  font-size: clamp(
+    22px,
+    4vw,
+    32px
+  );
 }
 
 /* =====================================
@@ -52,10 +58,12 @@ body {
 
 .score-board {
   display: flex;
+
   justify-content: center;
   align-items: center;
 
   gap: 8px;
+
   flex-wrap: wrap;
 }
 
@@ -67,6 +75,7 @@ body {
   background: #222;
 
   border: 1px solid #555;
+
   border-radius: 8px;
 
   font-size: 13px;
@@ -88,7 +97,9 @@ body {
   margin-top: 8px;
 
   display: flex;
+
   justify-content: center;
+
   gap: 8px;
 }
 
@@ -97,6 +108,7 @@ body {
   padding: 8px 16px;
 
   border: none;
+
   border-radius: 6px;
 
   font-size: 15px;
@@ -118,6 +130,7 @@ body {
   width: 100%;
 
   display: flex;
+
   justify-content: center;
 
   flex: 1;
@@ -130,17 +143,15 @@ body {
 .road {
   position: relative;
 
-  width: min(500px, 92vw);
+  width: min(
+    500px,
+    92vw
+  );
 
-  /*
-    Desktop:
-    Road maximum height 600px
-
-    Mobile:
-    Height viewport ke according calculate hoga
-  */
-
-  height: min(600px, calc(100vh - 190px));
+  height: min(
+    600px,
+    calc(100vh - 190px)
+  );
 
   min-height: 400px;
 
@@ -170,19 +181,20 @@ body {
   top: -200px;
 
   width: 7px;
+
   height: 200%;
 
-  background: repeating-linear-gradient(
-    to bottom,
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      white 0px,
+      white 70px,
+      transparent 70px,
+      transparent 140px
+    );
 
-    white 0px,
-    white 70px,
-
-    transparent 70px,
-    transparent 140px
-  );
-
-  animation: roadMove 0.5s linear infinite;
+  animation:
+    roadMove 0.5s linear infinite;
 
   pointer-events: none;
 }
@@ -200,6 +212,7 @@ body {
 }
 
 @keyframes roadMove {
+
   from {
     transform: translateY(0);
   }
@@ -207,6 +220,7 @@ body {
   to {
     transform: translateY(140px);
   }
+
 }
 
 /* =====================================
@@ -216,41 +230,27 @@ body {
 .player-car {
   position: absolute;
 
-  /*
-    Bottom se player car fixed rahegi
-  */
-
   bottom: 35px;
 
-  transform: translateX(-50%);
+  transform:
+    translateX(-50%)
+    rotate(-90deg);
 
-  /*
-    Car road ke andar rahe
-  */
-
-  font-size: clamp(42px, 8vw, 58px);
+  font-size:
+    clamp(
+      42px,
+      8vw,
+      58px
+    );
 
   line-height: 1;
 
   z-index: 10;
 
-  transition: left 0.12s ease;
-
-  /*
-    🚗 emoji ko road ke upar
-    front/up direction mein dikhane ki koshish
-  */
+  transition:
+    left 0.12s ease;
 
   transform-origin: center;
-
-  /*
-    Player car ko thoda rotate
-    taaki front upar lage
-  */
-
-  transform:
-    translateX(-50%)
-    rotate(-90deg);
 
   user-select: none;
 
@@ -268,7 +268,12 @@ body {
     translateX(-50%)
     rotate(270deg);
 
-  font-size: clamp(42px, 8vw, 58px);
+  font-size:
+    clamp(
+      42px,
+      8vw,
+      58px
+    );
 
   line-height: 1;
 
@@ -278,16 +283,6 @@ body {
 
   pointer-events: none;
 }
-
-/*
-  Player:
-      ↑
-
-  Enemy:
-      ↓
-
-  Dono face-to-face
-*/
 
 /* =====================================
    PAUSE
@@ -299,13 +294,15 @@ body {
   top: 50%;
   left: 50%;
 
-  transform: translate(-50%, -50%);
+  transform:
+    translate(-50%, -50%);
 
   width: 80%;
 
   padding: 25px;
 
-  background: rgba(0, 0, 0, 0.88);
+  background:
+    rgba(0, 0, 0, 0.88);
 
   border-radius: 12px;
 
@@ -315,7 +312,12 @@ body {
 .pause-screen h2 {
   margin: 0 0 10px;
 
-  font-size: clamp(22px, 5vw, 32px);
+  font-size:
+    clamp(
+      22px,
+      5vw,
+      32px
+    );
 }
 
 /* =====================================
@@ -328,13 +330,15 @@ body {
   top: 50%;
   left: 50%;
 
-  transform: translate(-50%, -50%);
+  transform:
+    translate(-50%, -50%);
 
   width: 82%;
 
   padding: 25px;
 
-  background: rgba(0, 0, 0, 0.93);
+  background:
+    rgba(0, 0, 0, 0.93);
 
   border: 2px solid white;
 
@@ -344,7 +348,12 @@ body {
 }
 
 .game-over h2 {
-  font-size: clamp(25px, 6vw, 36px);
+  font-size:
+    clamp(
+      25px,
+      6vw,
+      36px
+    );
 
   margin-top: 0;
 }
@@ -393,11 +402,6 @@ body {
 
   cursor: pointer;
 
-  /*
-    Mobile browser scrolling/zooming
-    prevent karne ke liye
-  */
-
   touch-action: manipulation;
 
   -webkit-tap-highlight-color: transparent;
@@ -430,9 +434,13 @@ body {
   }
 
   .road {
-    width: min(500px, 94vw);
+    width: min(
+      500px,
+      94vw
+    );
 
-    height: calc(95vh - 210px);
+    height:
+      calc(95vh - 210px);
 
     min-height: 380px;
   }
@@ -462,6 +470,7 @@ body {
 
   .game {
     height: 100dvh;
+
     min-height: 100dvh;
 
     overflow: hidden;
@@ -512,14 +521,13 @@ body {
   }
 
   .road {
-    width: min(94vw, 420px);
+    width: min(
+      100vw,
+      420px
+    );
 
-    /*
-      Header + controls + mobile buttons
-      ke according road height
-    */
-
-    height: calc(100dvh - 185px);
+    height:
+      calc(94dvh - 185px);
 
     min-height: 350px;
 
@@ -575,7 +583,8 @@ body {
   }
 
   .road {
-    height: calc(92dvh - 175px);
+    height:
+      calc(92dvh - 175px);
 
     min-height: 320px;
   }

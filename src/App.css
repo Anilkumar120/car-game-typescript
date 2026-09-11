@@ -432,7 +432,7 @@ body {
   .road {
     width: min(500px, 94vw);
 
-    height: calc(100vh - 210px);
+    height: calc(95vh - 210px);
 
     min-height: 380px;
   }
@@ -575,7 +575,7 @@ body {
   }
 
   .road {
-    height: calc(100dvh - 175px);
+    height: calc(92dvh - 175px);
 
     min-height: 320px;
   }
